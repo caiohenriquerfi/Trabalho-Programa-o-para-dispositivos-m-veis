@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>App ContabilidadeMotora</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+        
+        .caixa-sistema {
+            width: 100%;
+            max-width: 420px; 
+            background: #1e1e1e;
+            padding: 25px;
+            margin: 10px auto;
+            border-radius: 20px; 
+            box-shadow: 0px 10px 25px rgba(0,0,0,0.6);
+            border: 1px solid #2b2b2b;
+            box-sizing: border-box;
+        }
+        
+        h2 { color: #00b4d8; text-align: center; margin-bottom: 5px; font-size: 24px; }
+        .sub { font-size: 13px; color: #aaa; text-align: center; margin-bottom: 25px; }
+        label { display: block; font-weight: bold; margin-top: 18px; font-size: 15px; color: #e0e0e0; }
+        
+        .input-campo {
+            width: 100%;
+            padding: 14px;
+            margin-top: 8px;
+            box-sizing: border-box;
+            border: 1px solid #444;
+            background-color: #2a2a2a;
+            color: #fff;
+            border-radius: 10px;
+            font-size: 16px;
+        }
+        .input-campo:focus {
+            border-color: #00b4d8;
+            outline: none;
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 16px;
+            background-color: #00b4d8;
+            color: #121212;
+            border: none;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 22px;
+            transition: 0.2s;
+            box-shadow: 0px 4px 10px rgba(0, 180, 216, 0.2);
+        }
+        .btn:hover { background-color: #0096b4; }
+        
+        .bloco-resultado {
+            margin-top: 25px;
+            padding: 18px;
+            border: 1px solid #444;
+            background-color: #252525;
+            border-radius: 10px;
+            font-size: 15px;
+        }
+        ul { padding-left: 20px; margin: 8px 0; }
+        li { margin-bottom: 10px; color: #ddd; font-size: 14px; }
+        hr { border: 0; border-top: 1px solid #444; margin: 20px 0; }
+        
+        .bloco-iot {
+            background-color: #1a262f;
+            border: 1px dashed #00b4d8;
+            padding: 18px;
+            border-radius: 12px;
+            margin-top: 15px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<div class="caixa-sistema">
+    <h2 style="font-size: 24px; color: #00b4d8; display: flex; align-items: center; justify-content: center; gap: 10px;">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-1.1-.9-2-2-2h-3l-2-4H5L3 11H2c-1.1 0-2 .9-2 2v3c0 .6.4 1 1 1h2"/>
+            <circle cx="7" cy="17" r="2"/>
+            <circle cx="17" cy="17" r="2"/>
+            <path d="M9 17h6"/>
+        </svg>
+        ContabilidadeMotora
+    </h2>
+    
+    <p id="msgLogin" style="text-align: center; color: #ffffff; font-size: 14px; margin-bottom: 20px;">Bem-vindo! Faça o login para continuar.</p>
+    
+    <p class="sub">Projeto de Extensão Estácio</p>
+    <hr>
+
+    <div id="divLogin">
+        <label>Usuário do Motorista:</label>
+        <input type="text" id="usuario" class="input-campo" placeholder="admin">
+        
+        <label>Senha:</label>
+        <input type="password" id="senha" class="input-campo" placeholder="1234">
+        
+        <button class="btn" onclick="logar()">Entrar no App</button>
+    </div>
+
+    <div id="divApp" style="display: none;">
+        
+        <div class="bloco-iot">
+            <h4 style="color: #00b4d8; margin: 0 0 8px 0; font-size: 16px;">📡 Telemetria IoT OBD2 (Conectado)</h4>
+            <p style="font-size: 12px; color: #bbb; margin: 0 0 12px 0;">Sincronizar dados de rodagem via nuvem com o veículo</p>
+            <button type="button" class="btn" style="margin-top: 0; padding: 10px; font-size: 14px; background-color: #2a2a2a; color: #00b4d8; border: 1px solid #00b4d8;" onclick="sincronizarDadosIot()">Sincronizar Sensor do Carro</button>
+        </div>
+
+        <label>Faturamento Bruto da Semana (R$):</label>
+        <input type="number" id="faturamento" class="input-campo" value="1000">
+        
+        <label>KM Rodada na Semana:</label>
+        <input type="number" id="km" class="input-campo" value="540">
+        
+        <label>Dias Trabalhados (1 a 7):</label>
+        <input type="number" id="dias" class="input-campo" value="5">
+        
+        <label>Preço do Combustível por Litro (R$):</label>
+        <input type="number" id="precoGasolina" class="input-campo" value="5.80">
+        
+        <label>Consumo do Carro (KM/L):</label>
+        <input type="number" id="consumo" class="input-campo" value="10">
+
+        <label>Gasto Diário com Alimentação (R$):</label>
+        <input type="number" id="alimentacao" class="input-campo" value="24">
+
+        <label>Seguro Proporcional Semanal (R$):</label>
+        <input type="number" id="seguro" class="input-campo" value="114">
+
+        <label>Parcela de Financiamento Semanal (R$):</label>
+        <input type="number" id="financiamento" class="input-campo" value="0">
+        
+        <button class="btn" onclick="calcularETurarRelatorio()">Calcular e Salvar no Banco</button>
+        
+        <div id="resultado" class="bloco-resultado" style="display: none;"></div>
+        
+        <div id="bancoDadosVisual" class="bloco-resultado" style="margin-top: 20px;">
+            <h4 style="color: #00b4d8; margin-top: 0; font-size: 16px;">🗄️ Dados Gravados no Sistema (Banco Local):</h4>
+            <div id="conteudoBanco">Nenhum registro salvo ainda.</div>
+            <button class="btn" style="background-color: #a94442; color: #fff; margin-top: 20px; padding: 12px; font-size: 14px;" onclick="limparBanco()">Limpar Histórico</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function logar() {
+        var u = document.getElementById('usuario').value;
+        var s = document.getElementById('senha').value;
+        
+        if (u === "admin" && s === "1234") {
+            document.getElementById('divLogin').style.display = 'none';
+            document.getElementById('msgLogin').style.display = 'none';
+            document.getElementById('divApp').style.display = 'block';
+            mostrarDadosDoBanco(); 
+        } else {
+            alert("Usuário ou senha errados!");
+        }
+    }
+
+    function sincronizarDadosIot() {
+        alert("Fazendo requisição ao gateway do dispositivo IoT no veículo...");
+        var fatSimulado = 1320; 
+        var kmSimulado = 580;
+        var consumoSimulado = 12; 
+        document.getElementById('faturamento').value = fatSimulado;
+        document.getElementById('km').value = kmSimulado;
+        document.getElementById('consumo').value = consumoSimulado;
+        alert("Dados de telemetria recebidos com sucesso via IoT!");
+    }
+
+    function contaGasolina(km, consumo, preco) {
+        return (km / consumo) * preco;
+    }
+
+    function calcularETurarRelatorio() {
+        var fat = parseFloat(document.getElementById('faturamento').value) || 0;
+        var kmRodado = parseFloat(document.getElementById('km').value) || 0;
+        var diasTrab = parseInt(document.getElementById('dias').value) || 1;
+        var precoLitro = parseFloat(document.getElementById('precoGasolina').value) || 0;
+        var kmPorLitro = parseFloat(document.getElementById('consumo').value) || 1;
+        var rangoDiario = parseFloat(document.getElementById('alimentacao').value) || 0;
+        var segSemanal = parseFloat(document.getElementById('seguro').value) || 0;
+        var financSemanal = parseFloat(document.getElementById('financiamento').value) || 0;
+
+        var gastoCombustivel = contaGasolina(kmRodado, kmPorLitro, precoLitro);
+        var reservaManutencao = kmRodado * 0.10;
+        var gastoAlimentacaoTotal = 0;
+        for (var i = 1; i <= diasTrab; i++) {
+            gastoAlimentacaoTotal += rangoDiario;
+        }
+
+        var custosTotais = gastoCombustivel + reservaManutencao + gastoAlimentacaoTotal + segSemanal + financSemanal;
+        var lucroReal = fat - custosTotais;
+
+        var divRes = document.getElementById('resultado');
+        divRes.style.display = 'block';
+        
+        var corLucro = lucroReal > 0 ? '#4caf50' : '#f44336';
+        
+        divRes.innerHTML = "<h4 style='margin-top:0; color:#00b4d8;'>Resultado da Semana:</h4>" +
+                           "<p>Custos de Combustível: R$ " + gastoCombustivel.toFixed(2) + "</p>" +
+                           "<p style='color: #ffb703;'><strong>Guardar p/ Manutenção: R$ " + reservaManutencao.toFixed(2) + "</strong></p>" +
+                           "<p>Custos de Alimentação: R$ " + gastoAlimentacaoTotal.toFixed(2) + "</p>" +
+                           "<p>Seguro Semanal: R$ " + segSemanal.toFixed(2) + "</p>" +
+                           "<p>Financiamento Semanal: R$ " + financSemanal.toFixed(2) + "</p>" +
+                           "<hr>" +
+                           "<p style='color:" + corLucro + "; font-size:16px; margin-bottom:0;'><strong>LUCRO LÍQUIDO: R$ " + lucroReal.toFixed(2) + "</strong></p>";
+
+        var registro = {
+            faturamento: fat,
+            lucro: lucroReal,
+            data: new Date().toLocaleDateString()
+        };
+
+        var historico = JSON.parse(localStorage.getItem('historicoMotorista')) || [];
+        historico.push(registro);
+        localStorage.setItem('historicoMotorista', JSON.stringify(historico));
+        mostrarDadosDoBanco();
+    }
+
+    function mostrarDadosDoBanco() {
+        var historico = JSON.parse(localStorage.getItem('historicoMotorista')) || [];
+        var painel = document.getElementById('conteudoBanco');
+        
+        if (historico.length === 0) {
+            painel.innerHTML = "Nenhum registro salvo no banco local.";
+            return;
+        }
+
+        var htmlBanco = "<ul style='margin-bottom:0;'>";
+        for (var x = 0; x < historico.length; x++) {
+            htmlBanco += "<li>Sessão " + (x+1) + " (" + historico[x].data + ")<br>Faturamento: R$ " + historico[x].faturamento.toFixed(2) + " | <span style='color:#4caf50;'><strong>Lucro: R$ " + historico[x].lucro.toFixed(2) + "</strong></span></li>";
+        }
+        htmlBanco += "</ul>";
+        painel.innerHTML = htmlBanco;
+    }
+
+    function limparBanco() {
+        localStorage.removeItem('historicoMotorista');
+        mostrarDadosDoBanco();
+        document.getElementById('resultado').style.display = 'none';
+    }
+</script>
+
+</body>
+</html>
