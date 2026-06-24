@@ -1,1 +1,1 @@
-link final para acessar o projeto: https://contabilidade-motora-estacio.netlify.app/
+link final para acessar o projeto: https://contabilidade-motora-estacio.netlify.app
